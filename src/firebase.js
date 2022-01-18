@@ -9,12 +9,6 @@ const app = initializeApp({
   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_APP_ID,
-  // apiKey: "AIzaSyBuz8uLagpEsxLn8K5M-8RjOzTHtvhevuc",
-  // authDomain: "react-quiz-app---dev.firebaseapp.com",
-  // projectId: "react-quiz-app---dev",
-  // storageBucket: "react-quiz-app---dev.appspot.com",
-  // messagingSenderId: "603507844511",
-  // appId: "1:603507844511:web:ce70f97c94dc5a969449aa"
 });
 
 export default app;
