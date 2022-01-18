@@ -1,13 +1,13 @@
-import React, { useState, useContext, useEffect } from "react";
-import "../firebase";
 import {
-  getAuth,
   createUserWithEmailAndPassword,
-  updateProfile,
+  getAuth,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged,
+  updateProfile,
 } from "firebase/auth";
+import React, { useContext, useEffect, useState } from "react";
+import "../firebase";
 
 const AuthContext = React.createContext();
 
@@ -16,25 +16,27 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [Loading, setLoading] = useState(true);
-  const [CurrentUser, setCurrentUser] = useState();
+  const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState();
 
   useEffect(() => {
     const auth = getAuth();
-    const unsubcribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       setLoading(false);
     });
-    return unsubcribe;
+
+    return unsubscribe;
   }, []);
 
-  //signup function
-
-  async function signup(email, password, usename) {
+  // signup function
+  async function signup(email, password, username) {
     const auth = getAuth();
     await createUserWithEmailAndPassword(auth, email, password);
+
+    // update profile
     await updateProfile(auth.currentUser, {
-      displayName: usename,
+      displayName: username,
     });
 
     const user = auth.currentUser;
@@ -44,11 +46,11 @@ export function AuthProvider({ children }) {
   }
 
   // login function
-
   function login(email, password) {
     const auth = getAuth();
     return signInWithEmailAndPassword(auth, email, password);
   }
+
   // logout function
   function logout() {
     const auth = getAuth();
@@ -56,7 +58,7 @@ export function AuthProvider({ children }) {
   }
 
   const value = {
-    CurrentUser,
+    currentUser,
     signup,
     login,
     logout,
@@ -64,7 +66,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={value}>
-      {!Loading && children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 }
