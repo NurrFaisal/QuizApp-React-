@@ -26,7 +26,7 @@ export default function useQuestions(videoID) {
         setError(false);
         setLoading(true);
         const snapshot = await get(quizQuery);
-
+        setLoading(false);
         if (snapshot.exists()) {
             setQuestions((prevQuestions) => {
             return [...prevQuestions, ...Object.values(snapshot.val())];
@@ -38,9 +38,8 @@ export default function useQuestions(videoID) {
         setError(true);
       }
     }
-    setTimeout(() => {
-        fetchQuestions();
-    }, 2000);
+    fetchQuestions();
+    
     
   }, [videoID]);
 

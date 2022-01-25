@@ -5,6 +5,9 @@ import Answers from "../Answers";
 import MiniPlayer from "../MiniPlayer";
 import ProgressBar from "../ProgressBar";
 import _ from "lodash"
+import { useAuth } from "../../contexts/AuthContext";
+import { getDatabase, ref, set } from "firebase/database";
+import { useHistory } from "react-router-dom";
 
 
 
@@ -37,6 +40,9 @@ export default function Quiz() {
 
   const [qna, dispatch] = useReducer(reducer, initialState);
 
+  const {currentUser} = useAuth();
+  const history = useHistory();
+
   useEffect(() => {
   
     dispatch({
@@ -46,14 +52,57 @@ export default function Quiz() {
 
   }, [questions])
 
+  function handleAnswerChange(e, index){
+    dispatch({
+      type : "answer",
+      questionID : currentQuestion,
+      optionIndex : index,
+      value : e.target.checked,
+    });
+  }
+  
+  function nextQuestion(){
+    if(currentQuestion + 1 < questions.length){
+      setCurrentQuestion((preCurrent) => preCurrent + 1)
+    }
+  }
+  function preQuestion(){
+    if(currentQuestion >= 1 && currentQuestion <= questions.length){
+      setCurrentQuestion((preCurrent) => preCurrent - 1)
+    }
+  }
+  async function submit(){
+    const {uid} = currentUser;
+    const db = getDatabase();
+    const resultRef = ref(db, `result/${uid}`);
+    await set(resultRef, {
+      [id] : qna
+    });
+    history.push({
+      pathname: `/result/${id}`,
+      state:{
+        qna,
+      }
+    });
+  }
+
+  // calculate percentage of progress
+  const percentage =
+   questions.length > 0 ? ((currentQuestion + 1) / questions.length) * 100 : 0;
+
   return (
     <>
-    {console.log(qna)}
-      <h1>Pick three of your favorite Star Wars Flims</h1>
+    {loading && <div>Loading...</div>}
+    {error && <div>There have some error</div>}
+    {!loading && !error && qna && qna.length  > 0 && (
+      <>
+      <h1>{qna[currentQuestion].title}</h1>
       <h4>Question can have multiple answers</h4>
-      <Answers />
-      <ProgressBar />
+      <Answers options={qna[currentQuestion].options} handleChange={handleAnswerChange}  />
+      <ProgressBar next={nextQuestion} prev={preQuestion} submit={submit} progress={percentage} />
       <MiniPlayer />
+      </>
+      )}  
     </>
   );
 }
