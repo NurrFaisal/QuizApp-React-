@@ -46,7 +46,10 @@ export default function useVideoList(page) {
         setError(true);
       }
     }
-    fetchVideos();
+    setTimeout(() => {
+      fetchVideos();
+    }, 2000);
+    
   }, [page]);
 
   return {
