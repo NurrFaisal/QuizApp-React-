@@ -18,6 +18,7 @@ const app = initializeApp({
   storageBucket: "react-quiz-app---dev.appspot.com",
   messagingSenderId: "603507844511",
   appId: "1:603507844511:web:ce70f97c94dc5a969449aa",
+  // REACT_APP_PEXELS_API_KEY:563492ad6f91700001000001f970a594f14b4d7a8dff7967c3264d46
 });
 
 export default app;
